@@ -1,4 +1,8 @@
-MD
+
+![https://notebooklm.google.com/notebook/246c7cc6-7f3f-49c9-ae01-e0d7eea1626f?artifactId=d74c2a2e-9e1e-4044-bf4c-18ec105db303](https://notebooklm.google.com/notebook/246c7cc6-7f3f-49c9-ae01-e0d7eea1626f?artifactId=d74c2a2e-9e1e-4044-bf4c-18ec105db303)
+
+
+md
 ```
 \[\e[38;5;45m\]\w\[\e[0m\] \[\e[38;5;201m\][\e[5mGangTerm.apk is an exceptionally sophisticated, AI-powered "superlab" designed for Android devices. It functions as a professional, mobile-first development environment with several unique modular components that set it apart.
 Here are its most distinct features:
