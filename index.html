@@ -3,11 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Termux DevUtility</title>
+    <title>GangTerm</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Xterm.js for the integrated webshell terminal -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
     <style>
       body {
-        background-color: #0a0a0a;
+        background-color: #0d1117; /* GitHub dark theme background */
+        font-family: 'Inter', sans-serif;
+      }
+      .font-fira {
+        font-family: 'Fira Code', monospace;
+      }
+      /* Ensure terminal takes full height */
+      .terminal-container, .xterm, .xterm-viewport, .xterm-screen {
+        height: 100% !important;
       }
     </style>
   <script type="importmap">
@@ -16,13 +29,23 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0",
+    "@wasmer/wasi": "https://cdn.jsdelivr.net/npm/@wasmer/wasi@0.12.0/dist/index.esm.js",
+    "memfs": "https://cdn.jsdelivr.net/npm/memfs@3.4.7/lib/index.js",
+    "@wasmer/wasmfs": "https://aistudiocdn.com/@wasmer/wasmfs@^0.12.0"
   }
 }
 </script>
 </head>
   <body>
     <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.min.js"></script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
