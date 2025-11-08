@@ -121,7 +121,7 @@ echo "Installation complete."
             case 'Remove':
                 const packagesToRemove = removePackages.split(' ').filter(p => p);
                 if (packagesToRemove.length === 0) return;
-                const command = usePurge ? 'pkg purge' : 'pkg uninstall';
+                const command = usePurge ? 'apt purge' : 'pkg uninstall';
                 script += `
 echo "Removing ${packagesToRemove.length} package(s)..."
 ${command} -y ${packagesToRemove.join(' ')}
@@ -129,7 +129,9 @@ ${command} -y ${packagesToRemove.join(' ')}
 echo "Removal complete."
 `;
                 title = `${usePurge ? 'Purge' : 'Remove'} Script`;
-                description = `Executes \`${command}\` for the specified packages.`;
+                description = usePurge
+                    ? 'Executes `apt purge -y` to remove the selected packages and their configuration files.'
+                    : 'Executes `pkg uninstall -y` for the specified packages.';
                 break;
 
             case 'System': // A placeholder for the system buttons
@@ -215,7 +217,7 @@ echo "Cache cleaned."`;
                         </div>
                         <div className="flex items-center">
                             <input type="checkbox" id="purge" checked={usePurge} onChange={(e) => setUsePurge(e.target.checked)} className="h-5 w-5 rounded bg-gray-800 border-gray-600 text-green-500 focus:ring-green-600 cursor-pointer" />
-                            <label htmlFor="purge" className="ml-2 text-sm text-gray-300">Purge packages (remove configuration files)</label>
+                            <label htmlFor="purge" className="ml-2 text-sm text-gray-300">Use apt purge to remove packages and their configuration files</label>
                         </div>
                         <div className="pt-4">
                             <button onClick={() => generateScript('Remove')} disabled={removePackages.trim().length === 0} className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed">
