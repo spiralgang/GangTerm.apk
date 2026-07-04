@@ -75,6 +75,7 @@ export interface PackageManagerState {
     selectedPackages: string[];
     customPackages: string;
     removePackages: string;
+    usePurge: boolean;
 }
 
 export interface GuardianState {
@@ -184,7 +185,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         sourceApk: '', newPackageName: '', newAppName: '', versionCode: '', versionName: '',
     });
     const [packageManagerState, setPackageManagerState] = useLocalStorage<PackageManagerState>('gangterm_packageManagerState', {
-        activeTab: 'Install', selectedPackages: [], customPackages: '', removePackages: '',
+        activeTab: 'Install', selectedPackages: [], customPackages: '', removePackages: '', usePurge: false,
     });
     const [sandboxScript, setSandboxScript] = useLocalStorage<string>('gangterm_sandboxScript_v3', '# Welcome to the Head Honcho IDE!');
     const [snippets, setSnippets] = useLocalStorage<Snippet[]>('gangterm_snippets', []);

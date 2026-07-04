@@ -193,7 +193,7 @@ const NalaShow: React.FC = () => {
 
 export const PackageManagerTool: React.FC<PackageManagerToolProps> = ({ onGenerate }) => {
     const { packageManagerState, setPackageManagerState } = useApp();
-    const { activeTab, selectedPackages, customPackages, removePackages } = packageManagerState;
+    const { activeTab, selectedPackages, customPackages, removePackages, usePurge } = packageManagerState;
 
     const setState = (field: keyof typeof packageManagerState, value: any) => {
         setPackageManagerState(prev => ({ ...prev, [field]: value }));
@@ -234,15 +234,23 @@ echo "Installation complete."
             case 'Remove':
                 const packagesToRemove = removePackages.split(' ').filter(p => p);
                 if (packagesToRemove.length === 0) return;
+                const removalCommand = usePurge
+                    ? `apt purge -y ${packagesToRemove.join(' ')}`
+                    : `pkg uninstall -y ${packagesToRemove.join(' ')}`;
+                const removalNotice = usePurge
+                    ? "echo \"WARNING: This WILL remove system-wide configuration files.\""
+                    : "echo \"This will NOT remove system-wide configuration files.\"";
                 script += `
-echo "Removing ${packagesToRemove.length} package(s) using 'pkg uninstall'..."
-echo "This will NOT remove system-wide configuration files."
-pkg uninstall -y ${packagesToRemove.join(' ')}
+echo "Removing ${packagesToRemove.length} package(s) using '${usePurge ? 'apt purge -y' : 'pkg uninstall -y'}'..."
+${removalNotice}
+${removalCommand}
 
 echo "Removal complete."
 `;
-                title = `Remove Script`;
-                description = `Executes \`pkg uninstall\` for the specified packages. This is a safe operation that leaves configuration files intact.`;
+                title = usePurge ? `Remove Script (Purge Enabled)` : `Remove Script`;
+                description = usePurge
+                    ? `Executes \`apt purge -y\` for the specified packages. This operation removes the packages and their configuration files.`
+                    : `Executes \`pkg uninstall\` for the specified packages. This is a safe operation that leaves configuration files intact.`;
                 break;
 
             case 'System':
@@ -358,13 +366,30 @@ echo "# find $HOME -type d -name 'node_modules' -print0 | xargs -0 rm -rf"
                 return (
                     <div className="space-y-4">
                         <div>
-                            <Tooltip text="Enter the names of packages you want to remove, separated by spaces. This will use 'pkg uninstall' and will not remove configuration files.">
+                            <Tooltip text="Enter the names of packages you want to remove, separated by spaces. By default this uses 'pkg uninstall' and keeps configuration files. Enable purge below to remove configs as well.">
                                 <label className="block text-sm font-medium text-gray-400 mb-2 cursor-help">Packages to Remove (space-separated)</label>
                             </Tooltip>
                             <textarea value={removePackages} onChange={(e) => setState('removePackages', e.target.value)} className="w-full h-24 bg-[#010409] border border-gray-700 rounded-md px-3 py-2 text-gray-200 focus:ring-2 focus:ring-green-500 focus:outline-none font-fira text-sm" placeholder="e.g., old-package unused-tool" />
                         </div>
+                        <div className="flex items-start gap-3 bg-[#161b22] border border-gray-800/60 rounded-md px-3 py-2">
+                            <input
+                                type="checkbox"
+                                id="pkg-purge-toggle"
+                                checked={usePurge}
+                                onChange={() => setState('usePurge', !usePurge)}
+                                className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-800 text-red-500 focus:ring-red-500 cursor-pointer"
+                            />
+                            <div className="text-sm">
+                                <label htmlFor="pkg-purge-toggle" className="font-semibold text-red-400 cursor-pointer">Purge configuration files</label>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    When enabled, the generated script will run <code className="bg-gray-800 px-1 rounded">apt purge -y</code> for the listed packages. This is a destructive action that removes configuration files. Ensure you have backups before proceeding.
+                                </p>
+                            </div>
+                        </div>
                         <div className="pt-2">
-                            <Tooltip text="Generates a script to remove the specified packages using the safe 'pkg uninstall' command.">
+                            <Tooltip text={usePurge
+                                ? "Generates a script that uses 'apt purge -y' to remove packages and configuration files."
+                                : "Generates a script that uses 'pkg uninstall' and keeps configuration files intact."}>
                                 <span className="block w-full">
                                     <button onClick={() => generateScript('Remove')} disabled={removePackages.trim().length === 0} className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors duration-200 disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed">
                                         <TerminalIcon className="w-5 h-5" />
