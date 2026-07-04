@@ -20,3 +20,18 @@ Critically, the AI Agent's behavior is contractually obligated to adapt to this 
 Forensic-Grade Tooling: Tools are designed with professional auditability in mind.
 The APK Fusion Tool doesn't just modify an APK. It generates a complete, monolithic bash script that performs every step of the process with extensive logging and error handling, creating a full audit trail for forensic analysis. This embodies the project's core philosophy of creating robust, professional-grade tools.> alias README.md-glow='echo -e "\e[38;5;45m$(figlet -f slant "README.md") \e[0m">
 ```
+
+## Configuring Gemini access
+
+GangTerm relies on Google Gemini for AI-assisted tooling such as package descriptions. Provide your API key via Vite's public environment variables:
+
+1. Create a `.env.local` file in the project root (Vite automatically loads it during `npm run dev` and `npm run build`).
+2. Add your key using the `VITE_GEMINI_API_KEY` variable:
+
+   ```ini
+   VITE_GEMINI_API_KEY=your-api-key-here
+   ```
+
+3. Restart the dev server after adding or changing the key so the new value is available to the frontend.
+
+If the key is missing, GangTerm now surfaces a clear error explaining how to configure it.

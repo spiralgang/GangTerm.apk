@@ -32,8 +32,24 @@ const popularPackages = [
     { name: 'jp2a', desc: 'JPEG to ASCII converter.'},
 ];
 
-// Fix: Initialize GoogleGenAI according to guidelines without type casting.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const GEMINI_MISSING_ERROR = 'Gemini API key is not configured. Set VITE_GEMINI_API_KEY in your .env.local file.';
+
+let cachedGeminiClient: GoogleGenAI | null = null;
+
+const getGeminiClient = () => {
+    if (cachedGeminiClient) {
+        return cachedGeminiClient;
+    }
+
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    if (!apiKey) {
+        throw new Error(GEMINI_MISSING_ERROR);
+    }
+
+    cachedGeminiClient = new GoogleGenAI({ apiKey });
+    return cachedGeminiClient;
+};
 
 const NalaShow: React.FC = () => {
     const [pkgName, setPkgName] = useState('nala');
@@ -71,8 +87,9 @@ const NalaShow: React.FC = () => {
         setError('');
         setDescription('');
         try {
+            const gemini = getGeminiClient();
             const systemInstruction = "You are an expert on Linux packages, specifically for Debian/Ubuntu based systems like Termux. The user will provide a package name. Your task is to provide a concise, one-paragraph description of that package and its primary use case, as if you were the `nala show` or `apt show` command. Do not add any extra conversational text. Just provide the description.";
-            const response = await ai.models.generateContent({
+            const response = await gemini.models.generateContent({
                 model: 'gemini-2.5-flash',
                 contents: `Describe the package: ${pkgName}`,
                 config: { systemInstruction }
@@ -80,7 +97,11 @@ const NalaShow: React.FC = () => {
             setDescription(response.text);
         } catch (err) {
             console.error(err);
-            setError('Failed to fetch package description.');
+            if (err instanceof Error && err.message === GEMINI_MISSING_ERROR) {
+                setError(err.message);
+            } else {
+                setError('Failed to fetch package description.');
+            }
         } finally {
             setIsLoading(false);
         }
