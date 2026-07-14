@@ -79,6 +79,8 @@ def load_file(path: str) -> str:
         return f.read()
 
 def fetch_link(url: str, timeout: int = 30) -> str:
+    if not url.startswith(("http://", "https://")):
+        raise ValueError("Only http:// and https:// protocols are allowed")
     req = urllib.request.Request(url, headers={"User-Agent": "superlab/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
