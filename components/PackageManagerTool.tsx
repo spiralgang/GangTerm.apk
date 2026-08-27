@@ -193,7 +193,7 @@ const NalaShow: React.FC = () => {
 
 export const PackageManagerTool: React.FC<PackageManagerToolProps> = ({ onGenerate }) => {
     const { packageManagerState, setPackageManagerState } = useApp();
-    const { activeTab, selectedPackages, customPackages, removePackages, usePurge } = packageManagerState;
+    const { activeTab, selectedPackages, customPackages, removePackages, usePurge = false } = packageManagerState;
 
     const setState = (field: keyof typeof packageManagerState, value: any) => {
         setPackageManagerState(prev => ({ ...prev, [field]: value }));
